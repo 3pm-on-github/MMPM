@@ -2,10 +2,12 @@
 MMPM is a modding tool for the game MrMemesPizzaPlace. It currently only has 1 feature.
 
 ## Features
+Allowing Skipping<br>
 Cheats:<br>
 Reset Money (resets the money amount)<br>
 Money Boost (gives +1000000 money)<br>
 Max Money (sets the money amount to one goggol)<br>
+Locking/Unlocking Chapter 2<br>
 
 **That's all for now. It's not much, but at least there's something.**
 
