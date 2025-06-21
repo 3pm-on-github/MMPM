@@ -10,7 +10,7 @@ Max Money (sets the money amount to one goggol)<br>
 **That's all for now. It's not much, but at least there's something.**
 
 ## Setup
-1. Go to the Releases page and download the latest release of MMPM. (Make sure to get the MMPM0.0.1@ALPHA1.zip file!)<br>
+1. Go to the Releases page and download the latest release of MMPM.<br>
 2. Extract the file.<br>
 3. Go into file explorer, and search for the MrMemesPizzaPlace folder. (you should see a "MrMemesPizzaPlace.py" file if you're at the right folder.)<br>
 4. Copy the folder path.<br>

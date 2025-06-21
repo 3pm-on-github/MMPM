@@ -18,7 +18,7 @@ screen main_menu():
             style "main_menu_vbox"
             text "[config.name]" style "main_menu_title"
             text "[config.version]" style "main_menu_version"
-            text "Modded with MMPM 0.0.1@ALPHA1.2.1" style "main_menu_version"
+            text "Modded with MMPM 0.0.2@ALPHA1.2.1" style "main_menu_version"
 
 screen about():
 
@@ -32,7 +32,7 @@ screen about():
 
             label "[config.name!t]"
             text _("Version [config.version!t]\n")
-            text _("MMPM Version 0.0.1@ALPHA1.2.1\n")
+            text _("MMPM Version 0.0.2@ALPHA1.2.1\n")
 
             ## gui.about is usually set in options.rpy.
             if gui.about:
@@ -176,6 +176,12 @@ init python:
         persistent.money = 2
     def MaxMoney():
         persistent.money = 10**100
+    def AllowSkipping():
+        config.allow_skipping = True
+    def UnlockChapter2():
+        persistent.chapter1_completed = True
+    def LockChapter2():
+        persistent.chapter1_completed = False
 
 screen mmpmtoolbox():
     tag menu
@@ -186,6 +192,7 @@ screen mmpmtoolbox():
         textbutton "Back" action Return()
 
         textbutton "Cheats" action ShowMenu("mmpmcheats") ypos 60 xpos 25
+        textbutton "Allow Skipping" action AllowSkipping ypos 90 xpos 25
 
 screen mmpmcheats():
     tag menu
@@ -198,11 +205,12 @@ screen mmpmcheats():
         textbutton "Money Boost (gives +1000000 money)" action MoneyBoost ypos 60 xpos 25
         textbutton "Max Money (sets money to a very high amount)" action MaxMoney ypos 120 xpos 25
         textbutton "Money Reset (resets money to 2 money)" action MoneyReset ypos 210 xpos 25
+        textbutton "Unlock Chapter 2" action UnlockChapter2 ypos 270 xpos 25
+        textbutton "Lock Chapter 2" action LockChapter2 ypos 300 xpos 25
 
 # other stuff
 
 label mmpp1:
-    $ config.allow_skipping = True
     "MMPM" "MMPM Injected. Thank you."
     stop music
     jump thesrar
