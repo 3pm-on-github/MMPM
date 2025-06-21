@@ -197,7 +197,7 @@ screen mmpmcheats():
 
         textbutton "Money Boost (gives +1000000 money)" action MoneyBoost ypos 60 xpos 25
         textbutton "Max Money (sets money to a very high amount)" action MaxMoney ypos 120 xpos 25
-        textbutton "Money Reset (resets money to 2 money)" action MoneyReset ypos 205 xpos 25
+        textbutton "Money Reset (resets money to 2 money)" action MoneyReset ypos 210 xpos 25
 
 # other stuff
 
@@ -206,100 +206,3 @@ label mmpp1:
     "MMPM" "MMPM Injected. Thank you."
     stop music
     jump thesrar
-
-# kys renpy, its not overriding the credits
-
-init python:
-    # Credits content
-    credits = [
-        ('Game by', 'Rodrigo Travanca'),
-        ('Code', 'Errors and Issues Fixed by 3pm'),
-        ('Music', 'Kevin MacLeod'),
-        ('Music', 'Undertale OST'),
-        ('Music', 'Pixabay Sounds'),
-        ('Sound Effects', 'Pixabay Sounds'),
-        ('Sound Effects', 'Other Free Sources'),
-        ('GUI Design', 'Feniks (itch.io)'),
-        ('Special Thanks', 'Swatxx'),
-        ('Special Thanks', '3pm'),
-        ('Special Thanks', 'Rodrigo Travanca Friends'),
-        ('Contributors', '3pm, Swatxx, and IRL Friends'),
-        ('Testing', '3pm'),
-        ('Testing', 'Swatxx'),
-        ('Engine', 'Ren\'Py Visual Novel Engine'),
-        ('Inspirations', 'DSAF Series and Five Nights at Freddy\'s'),
-        ('Inspirations', 'Full credits to the assets from FNAF'),
-        ('A game made for', 'Swatxx, and the friend builders & fans members!'),
-        ('Thank You!', 'To Everyone Involved'),
-        ('Special Thanks (added by MMPM)', 'To Myself, 3pm, who made this tool by a modder, for modders.')
-    ]
-
-    # Build the scrolling text
-    credits_s = "{size=80}{color=#FF0000}Credits{/color}\n\n"
-    c1 = ''
-    for c in credits:
-        if c1 != c[0]:
-            credits_s += "\n{size=60}{color=#FF0000}" + c[0] + "{/color}\n"
-        credits_s += "{size=40}{color=#FF0000}" + c[1] + "{/color}\n"
-        c1 = c[0]
-
-    # Add Ren'Py version to the credits
-    credits_s += "\n{size=60}{color=#FF0000}Engine{/color}\n{size=40}{color=#FF0000}" + renpy.version() + "{/color}"
-
-label creditsmodeltwo:
-    # credits screen two sir
-    image cred = Text(credits_s, text_align=0.5)
-    image theend = Text("{size=80}{color=#FF0000}The End..{/color}", text_align=0.5)
-    image thanks = Text("{size=80}{color=#FF0000}Thanks for Playing!{/color}", text_align=0.5)
-    image loveyall = Text("{size=80}{color=#FF0000}love y'all <3 - 3pm{/color}", text_align=0.5)
-    stop music
-    play music "audio/Mondaymorningcreditscene2.mp3" volume 0.4
-
-    $ credits_speed = 80  # Scrolling speed in seconds (increased to make it slower)
-
-    # Scene setup
-    scene black  # Replace this with a fancier background if desired
-
-    # Credits scrolling text
-    show cred at Move((0.5, 5.0), (0.5, 0.0), credits_speed, repeat=True, bounce=False, xanchor="center", yanchor="bottom")
-
-    # Display "The End"
-    show theend:
-        yanchor 0.5 ypos 0.5
-        xanchor 0.5 xpos 0.5
-    with dissolve
-    with Pause(5)
-    hide theend
-    with dissolve
-
-    # Pause for the credits scroll
-    with Pause(credits_speed - 5)
-
-    # Display splash screen
-    show splash
-    with dissolve
-    with Pause(3)
-    hide splash
-    with dissolve
-
-    # Display "Thanks for Playing!"
-    with Pause(1)
-    show thanks:
-        yanchor 0.5 ypos 0.5
-        xanchor 0.5 xpos 0.5
-    with dissolve
-    with Pause(4)
-    hide thanks
-    with dissolve
-
-    # Display "love y'all <3 - 3pm"
-    with Pause(1)
-    show loveyall:
-        yanchor 0.5 ypos 0.5
-        xanchor 0.5 xpos 0.5
-    with dissolve
-    with Pause(4)
-    hide loveyall
-    with dissolve
-
-    return
