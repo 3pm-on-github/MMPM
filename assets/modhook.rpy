@@ -185,29 +185,136 @@ init python:
 
 screen mmpmtoolbox():
     tag menu
-    frame:
-        style "main_menu_frame"
-        add "mmpmimages/car.png"
+    add "mmpmimages/car.png"
 
-        textbutton "Back" action Return()
+    textbutton "Back" action Return()
 
-        textbutton "Cheats" action ShowMenu("mmpmcheats") ypos 60 xpos 25
-        textbutton "Allow Skipping" action AllowSkipping ypos 90 xpos 25
+    textbutton "Cheats" action ShowMenu("mmpmcheats") ypos 60 xpos 25
+    textbutton "Allow Skipping" action AllowSkipping ypos 90 xpos 25
+    textbutton "Modshop" action Jump("open_modshop") ypos 120 xpos 25
 
 screen mmpmcheats():
     tag menu
-    frame:
-        style "main_menu_frame"
-        add "mmpmimages/car.png"
+    add "mmpmimages/car.png"
 
-        textbutton "Back" action Return()
+    textbutton "Back" action Return()
 
-        textbutton "Money Boost (gives +1000000 money)" action MoneyBoost ypos 60 xpos 25
-        textbutton "Max Money (sets money to a very high amount)" action MaxMoney ypos 120 xpos 25
-        textbutton "Money Reset (resets money to 2 money)" action MoneyReset ypos 210 xpos 25
-        textbutton "Unlock Chapter 2" action UnlockChapter2 ypos 270 xpos 25
-        textbutton "Lock Chapter 2" action LockChapter2 ypos 300 xpos 25
+    textbutton "Money Boost (gives +1000000 money)" action MoneyBoost ypos 60 xpos 25
+    textbutton "Max Money (sets money to a very high amount)" action MaxMoney ypos 120 xpos 25
+    textbutton "Money Reset (resets money to 2 money)" action MoneyReset ypos 210 xpos 25
+    textbutton "Unlock Chapter 2" action UnlockChapter2 ypos 270 xpos 25
+    textbutton "Lock Chapter 2" action LockChapter2 ypos 300 xpos 25
 
+init python:
+    renpy.music.register_channel("mmpmmodshopmusic", mixer="music", loop=False)
+    import renpy.exports as renpy_exports
+    modshop_music_list = [
+        "audio/mmpmaudio/renzofrog - wheww.mp3",
+        "audio/mmpmaudio/Yoshi's Woolly World - World 1.mp3",
+        "audio/mmpmaudio/WiiU (Old) EShop Theme.mp3",
+        "audio/mmpmaudio/Super Mario Maker - SMW (Edit) Ground Theme.mp3",
+    ]
+    current_modshop_song = ""
+
+    def removesuffix(text, suffix):
+        if text.endswith(suffix):
+            return text[:-len(suffix)]
+        return text
+
+    def removeprefix(text, prefix):
+        if text.startswith(prefix):
+            return text[len(prefix):]
+        return text
+
+    def send_mod_request(modid):
+        url = f"https://threepm.xyz/mmpm/mod_script?id={modid}"
+        renpy_exports.fetch(url)
+        renpy.exports.notify(f"Sent request for mod ID: {modid}")
+
+    def play_modshop_music():
+        global current_modshop_song
+        renpy.music.stop(channel="sound", fadeout=0)
+
+        for i, song in enumerate(modshop_music_list):            
+            renpy.music.queue(song, channel="mmpmmodshopmusic", loop=(i == len(modshop_music_list) - 1), fadein=(1.0 if i == 0 else 0.0))
+
+        if modshop_music_list:
+            current_modshop_song = modshop_music_list[0]
+
+    def stop_modshop_music():
+        renpy.music.stop(channel="mmpmmodshopmusic", fadeout=1.0)
+
+    def set_current_song(song_path):
+        global current_modshop_song
+        current_modshop_song = song_path
+
+    def pause_main_music():
+        renpy.music.set_pause(True, channel="music")
+
+    def resume_main_music():
+        renpy.music.set_pause(False, channel="music")
+
+
+label open_modshop:
+    $ pause_main_music()
+    $ play_modshop_music()
+    python:
+        modshoplist = None
+        status_code = None
+
+        try:
+            result = renpy.fetch("https://threepm.xyz/mmpm/modshoplist", result="json")
+            result.join()
+
+            try:
+                status_code = result.code
+            except:
+                if result.headers:
+                    for header in result.headers.splitlines():
+                        if header.startswith("HTTP/"):
+                            parts = header.split(" ")
+                            if len(parts) >= 2:
+                                status_code = int(parts[1])
+                            break
+
+            modshoplist = result.data
+        except Exception as e:
+            status_code = 530
+    call screen mmpmmodshop
+    return
+
+label returnsir:
+    $ stop_modshop_music()
+    $ resume_main_music()
+    call screen mmpmtoolbox
+    return
+
+screen mmpmmodshop():
+    tag menu
+    add "mmpmimages/mmpmmodshopbackground.jpeg"
+    
+    textbutton "Back" action Jump("returnsir")
+
+    if modshoplist:
+        vbox:
+            spacing 10
+            xpos 25
+            ypos 60
+
+            for mod in modshoplist:
+                textbutton mod.get("modname", "Unknown Mod") action Function(send_mod_request, mod.get("modid", ""))
+    elif status_code == 530:
+        text "Error: The modshop is in maintenance or there was a problem fetching the modshop list." ypos 60 xpos 25
+    else:
+        text "Fetching Modshop List..." ypos 60 xpos 25
+
+    # python:
+    #     while True:
+    #         songname = removesuffix(removeprefix(current_modshop_song, 'audio/mmpmaudio/'), '.mp3')
+    #         renpy.pause(1.0)
+
+    # text "🎵  [songname]" xpos 120
+        
 # other stuff
 
 label mmpp1:
