@@ -205,14 +205,16 @@ screen mmpmcheats():
     textbutton "Unlock Chapter 2" action UnlockChapter2 ypos 270 xpos 25
     textbutton "Lock Chapter 2" action LockChapter2 ypos 300 xpos 25
 
+default current_modshop_song = ""
+
 init python:
     renpy.music.register_channel("mmpmmodshopmusic", mixer="music", loop=False)
     import renpy.exports as renpy_exports
     modshop_music_list = [
+        "audio/mmpmaudio/lexycat - glitter.mp3",
+        "audio/mmpmaudio/tn-shi - synthesis..mp3",
         "audio/mmpmaudio/renzofrog - wheww.mp3",
-        "audio/mmpmaudio/Yoshi's Woolly World - World 1.mp3",
-        "audio/mmpmaudio/WiiU (Old) EShop Theme.mp3",
-        "audio/mmpmaudio/Super Mario Maker - SMW (Edit) Ground Theme.mp3",
+        "audio/mmpmaudio/dreamtrace404 - tv time is over.mp3",
     ]
     current_modshop_song = ""
 
@@ -236,24 +238,17 @@ init python:
         renpy.music.stop(channel="sound", fadeout=0)
 
         for i, song in enumerate(modshop_music_list):            
-            renpy.music.queue(song, channel="mmpmmodshopmusic", loop=(i == len(modshop_music_list) - 1), fadein=(1.0 if i == 0 else 0.0))
-
-        if modshop_music_list:
-            current_modshop_song = modshop_music_list[0]
+            renpy.music.queue(song, channel="mmpmmodshopmusic", loop=(i == len(modshop_music_list) - 1))
+        current_modshop_song = modshop_music_list[0]
 
     def stop_modshop_music():
         renpy.music.stop(channel="mmpmmodshopmusic", fadeout=1.0)
-
-    def set_current_song(song_path):
-        global current_modshop_song
-        current_modshop_song = song_path
 
     def pause_main_music():
         renpy.music.set_pause(True, channel="music")
 
     def resume_main_music():
         renpy.music.set_pause(False, channel="music")
-
 
 label open_modshop:
     $ pause_main_music()
@@ -263,7 +258,7 @@ label open_modshop:
         status_code = None
 
         try:
-            result = renpy.fetch("https://threepm.xyz/mmpm/modshoplist", result="json")
+            result = renpy.fetch("https://mmpm.threepm.xyz/api/v1/modshoplist", result="json")
             result.join()
 
             try:
@@ -289,6 +284,8 @@ label returnsir:
     call screen mmpmtoolbox
     return
 
+default songname = ""
+
 screen mmpmmodshop():
     tag menu
     add "mmpmimages/mmpmmodshopbackground.jpeg"
@@ -307,13 +304,11 @@ screen mmpmmodshop():
         text "Error: The modshop is in maintenance or there was a problem fetching the modshop list." ypos 60 xpos 25
     else:
         text "Fetching Modshop List..." ypos 60 xpos 25
+    
+    text "you're listening to: [songname]" xpos 120
 
-    # python:
-    #     while True:
-    #         songname = removesuffix(removeprefix(current_modshop_song, 'audio/mmpmaudio/'), '.mp3')
-    #         renpy.pause(1.0)
-
-    # text "🎵  [songname]" xpos 120
+    timer 0.5 repeat True action SetVariable("songname", renpy.music.get_playing("mmpmmodshopmusic")[16:-4])
+    timer 0.5 repeat True action SetVariable("current_modshop_song", renpy.music.get_playing("mmpmmodshopmusic"))
         
 # other stuff
 
