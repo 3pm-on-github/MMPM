@@ -305,7 +305,7 @@ screen mmpmmodshop():
     else:
         text "Fetching Modshop List..." ypos 60 xpos 25
     
-    text "you're listening to: [songname]" xpos 120
+    text "you're listening to: [songname]" xalign 1.0
 
     timer 0.5 repeat True action SetVariable("songname", renpy.music.get_playing("mmpmmodshopmusic")[16:-4])
     timer 0.5 repeat True action SetVariable("current_modshop_song", renpy.music.get_playing("mmpmmodshopmusic"))
